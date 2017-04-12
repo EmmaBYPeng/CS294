@@ -70,7 +70,8 @@ def main():
         expert_data = {'observations': np.array(observations),
                        'actions': np.array(actions)}
 
-        pickle.dump(expert_data, open(args['out_file'], 'wb'))
+        if args['out_file'] is not None:
+            pickle.dump(expert_data, open(args['out_file'], 'wb'))
 
 if __name__ == '__main__':
     main()

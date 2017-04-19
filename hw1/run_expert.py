@@ -20,11 +20,11 @@ import load_policy
 def main():
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('--expert_policy_file', type=str)
-    parser.add_argument('--envname', type=str)
-    parser.add_argument('--render', action='store_true')
+    parser.add_argument('--expert_policy_file', type=str, default="experts/Hopper-v1.pkl")
+    parser.add_argument('--envname', type=str, default="Hopper-v1")
+    parser.add_argument('--render', action='store_true', default=False)
     parser.add_argument("--max_timesteps", type=int)
-    parser.add_argument('--num_rollouts', type=int, default=100,
+    parser.add_argument('--num_rollouts', type=int, default=1000,
                         help='Number of expert roll outs')
     parser.add_argument('--out_file', type=str, help='save expert data to file')
     args = vars(parser.parse_args())

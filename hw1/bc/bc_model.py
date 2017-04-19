@@ -50,8 +50,13 @@ class BC(object):
             feed_dict[self.actions] = batch_y
         if is_train:
             _, pred, loss = sess.run([self.optimizer, self.pred, self.loss], feed_dict=feed_dict)
+            return pred, loss
         else:
-            pred, loss = sess.run([self.pred, self.loss], feed_dict=feed_dict)
-        return pred, loss
+            if batch_y is not None:
+                pred, loss = sess.run([self.pred, self.loss], feed_dict=feed_dict)
+                return pred, loss
+            else:
+                pred = sess.run([self.pred], feed_dict=feed_dict)
+                return pred
 
 

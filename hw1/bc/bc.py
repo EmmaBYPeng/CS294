@@ -75,23 +75,23 @@ def train(params):
                 logger.debug("###################################")
                 logger.info("Finished epoch %d, average training loss = %f" % (num_epoch, avg_loss))
                 if params["val"]:
-                    val_loss = validate(model, sess, data, batch_size)
-                    logger.info("Average validation loss = %f" % val_loss)
-                    if val_loss < prev_val_loss:  # Only save model if val loss dropped
-                        model.saver.save(sess, params["ckpt_dir"]+"model_bc.ckpt")
-                        logger.info("Model saved!")
-                    prev_val_loss = val_loss
+                    prev_val_loss = validate(model, logger, sess, data, batch_size, prev_val_loss, params["ckpt_dir"])
                 logger.debug("###################################")
                 avg_loss = 0
 
 
-def validate(model, sess, data, batch_size):
+def validate(model, logger, sess, data, batch_size, prev_loss, ckpt_dir):
     batches = data.batch_iter(data.val, batch_size, 1)
     avg_loss = []
     for i, (batch_x, batch_y) in enumerate(batches):
         pred, loss = model.step(sess, batch_x, batch_y, is_train=False)
         avg_loss.append(loss)
-    return sum(avg_loss) / len(avg_loss)
+    new_loss = sum(avg_loss) / len(avg_loss)
+    logger.info("Average validation loss = %f" % new_loss)
+    if new_loss < prev_loss:  # Only save model if val loss dropped
+        model.saver.save(sess, ckpt_dir + "model_bc.ckpt")
+        logger.info("Model saved!")
+    return new_loss
 
 
 def run_bc(params):

@@ -1,3 +1,5 @@
 .idea/
 /hw1/data/
+/hw1/bc/models/
+/hw1/bc/logs/
 *.pyc

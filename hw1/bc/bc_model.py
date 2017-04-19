@@ -9,27 +9,7 @@ class BC(object):
         self.pred, self.parameters = self.network()
         self.loss = self.get_loss()
         self.optimizer = self.get_optimizer(optimizer, lr)
-
-    def get_optimizer(self, optimizer, lr):
-        print("Using %s optimizer" % optimizer)
-        if optimizer == "adam":
-            return tf.train.AdamOptimizer(lr).minimize(self.loss)
-        elif optimizer == "adagrad":
-            return tf.train.AdagradOptimizer(lr).minimize(self.loss)
-        else:
-            return tf.train.GradientDescentOptimizer(lr).minimize(self.loss)
-
-    def get_loss(self):
-        loss = tf.reduce_mean(tf.pow(self.pred - self.actions, 2)) / 2
-        return loss
-
-    def step(self, sess, batch_x, batch_y, is_train=True):
-        feed_dict = {self.obs: batch_x, self.actions: batch_y}
-        if is_train:
-            _, pred, loss = sess.run([self.optimizer, self.pred, self.loss], feed_dict=feed_dict)
-        else:
-            pred, loss = sess.run([self.pred, self.loss], feed_dict=feed_dict)
-        return pred, loss
+        self.saver = tf.train.Saver(var_list=tf.global_variables())
 
     def network(self):
         """Simple two layer neural network"""
@@ -50,4 +30,28 @@ class BC(object):
             z_fc1 = tf.add(tf.matmul(a_fc1, w_fc2), b_fc2)
             parameters += [w_fc2, b_fc2]
         return z_fc1, parameters
+
+    def get_optimizer(self, optimizer, lr):
+        print("Using %s optimizer" % optimizer)
+        if optimizer == "adam":
+            return tf.train.AdamOptimizer(lr).minimize(self.loss)
+        elif optimizer == "adagrad":
+            return tf.train.AdagradOptimizer(lr).minimize(self.loss)
+        else:
+            return tf.train.GradientDescentOptimizer(lr).minimize(self.loss)
+
+    def get_loss(self):
+        loss = tf.reduce_mean(tf.pow(self.pred - self.actions, 2)) / 2
+        return loss
+
+    def step(self, sess, batch_x, batch_y=None, is_train=True):
+        feed_dict = {self.obs: batch_x}
+        if batch_y is not None:
+            feed_dict[self.actions] = batch_y
+        if is_train:
+            _, pred, loss = sess.run([self.optimizer, self.pred, self.loss], feed_dict=feed_dict)
+        else:
+            pred, loss = sess.run([self.pred, self.loss], feed_dict=feed_dict)
+        return pred, loss
+
 

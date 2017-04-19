@@ -51,8 +51,6 @@ class Data(object):
         """Batch generator for a dataset"""
         num_data = len(data["observations"])
         num_batch_per_epoch = int((num_data-1) / batch_size) + 1
-        print("Total epochs: %d" % num_epochs)
-        print("Num batch per epoch: %d" % num_batch_per_epoch)
 
         for epoch in range(num_epochs):
             obs, actions = data["observations"], data["actions"]
